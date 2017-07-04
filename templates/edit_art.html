@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <h1>Edit this artwork</h1>
+    <form action = "{{ url_for('editArt', art_id=editedItem.id) }}" method="POST">
+      <input name="itemName" value={{editedItem.name}} type="text"/>
+      <textarea name="itemDescription" type="text"/>{{editedItem.description}}</textarea>
+      <select name="categoryName">
+        {% for i in cities %}
+        <option value="{{i.id}}" {% if i.id == editedItem.city_id %}, selected="selected" {% endif %}>
+          {{i.name}}
+        </option>
+        {% endfor %}
+      </select>
+      <input type="submit" value="Add"/>
+    </form>
+  </body>
+</html>

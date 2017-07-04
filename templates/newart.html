@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <h1>Add new street art</h1>
+    <form action = "{{ url_for('newArt') }}" method="POST">
+      <input name="itemName" placeholder="Item Name" type="text"/>
+      <textarea name="itemDescription" placeholder="Description" type="text"/></textarea>
+      <select name="categoryName">
+        {% for i in cities %}
+        <option value="{{i.id}}">
+          {{i.name}}
+        </option>
+        {% endfor %}
+      </select>
+      <input type="submit" value="Add"/>
+    </form>
+  </body>
+</html>
