@@ -19,39 +19,24 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# Artworks in different cities
-city1 = City(name="Philadelphia")
+city3 = City(name="Washington")
 
-session.add(city1)
+session.add(city3)
 session.commit()
 
-art1 = Art(name="The Roots", description="A mural of the roots on South St.",
-           city=city1)
+city4 = City(name="Baltimore")
 
-session.add(art1)
+session.add(city4)
 session.commit()
 
-art2 = Art(name="Ela Fitzgerald", description="A mural of Ela Fitzgerald on Locust St.",
-           city=city1)
+city5 = City(name="Toronto")
 
-session.add(art2)
+session.add(city5)
 session.commit()
 
-city2 = City(name="New York")
+city6 = City(name="Chicago")
 
-session.add(city2)
-session.commit()
-
-art1 = Art(name="Elephants Playing", description="A mural of the elephants playing on W. 82nd Street.",
-           city=city2)
-
-session.add(art1)
-session.commit()
-
-art2 = Art(name="Two Books", description="A mural of two books in Chelsea.",
-           city=city2)
-
-session.add(art2)
+session.add(city6)
 session.commit()
 
 print "Art works added!"

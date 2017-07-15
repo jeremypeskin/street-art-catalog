@@ -63,6 +63,8 @@ def gconnect():
 
     # Check that the access token is valid.
     access_token = credentials.access_token
+    print "The access token is:"
+    print access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
     h = httplib2.Http()
@@ -96,10 +98,13 @@ def gconnect():
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
-
+    print "The access token is:"
+    print access_token
     # Store the access token in the session for later use.
     login_session['credentials'] = credentials
     login_session['gplus_id'] = gplus_id
+    print "The access token is:"
+    print access_token
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -122,6 +127,8 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+    print "The access token is:"
+    print access_token
 
  # DISCONNECT - Revoke a current user's token and reset their login_session
 
