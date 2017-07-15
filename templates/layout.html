@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    {% block head %}
+    <title>{% block title %}{% endblock %} - Alio</title>
+    {% endblock %}
+  </head>
+  <body>
+    <div id="navbar">
+      <ul>
+        <li>
+          <a href= {{ url_for('DefaultCityArt')}}>Home</a>
+        </li>
+        {% if session.logged_in %}
+          <li>
+            Logout
+          </li>
+        {% else %}
+          <li>
+            Login
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div id="content">{% block content %}{% endblock %}</div>
+  </body>
+</html>

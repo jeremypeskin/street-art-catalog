@@ -1,11 +1,10 @@
-<html>
-  <body>
-    <a href={{url_for('newArt')}}>Add Artwork</a>
-    <h1>Cities</h1>
-    {% for i in city %}
-      <div>
-        <a href={{ url_for('CityPage', city_id = i.id)}}>{{i.name}}</a>
-      </div>
-    {% endfor %}
-  </body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+  <a href={{url_for('newArt')}}>Add Artwork</a>
+  <h1>Cities</h1>
+  {% for i in city %}
+    <div>
+      <a href={{ url_for('CityPage', city_id = i.id)}}>{{i.name}}</a>
+    </div>
+  {% endfor %}
+{% endblock %}

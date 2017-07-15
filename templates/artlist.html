@@ -1,16 +1,15 @@
-<html>
-  <body>
-    <h1>Here are art works in {{city.name}}</h1>
-    {% for i in art %}
-      <div>
-        <a href={{ url_for('ArtPage', art_id = i.id)}}>{{i.name}}</a>
-      </div>
-    {% endfor %}
-    <h2>Select another city:</h2>
-    {% for i in cities %}
-      <div>
-        <a href={{ url_for('CityPage', city_id = i.id)}}>{{i.name}}</a>
-      </div>
-    {% endfor %}
-  </body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Here are art works in {{city.name}}</h1>
+  {% for i in art %}
+    <div>
+      <a href={{ url_for('ArtPage', art_id = i.id)}}>{{i.name}}</a>
+    </div>
+  {% endfor %}
+  <h2>Select another city:</h2>
+  {% for i in cities %}
+    <div>
+      <a href={{ url_for('CityPage', city_id = i.id)}}>{{i.name}}</a>
+    </div>
+  {% endfor %}
+{% endblock %}

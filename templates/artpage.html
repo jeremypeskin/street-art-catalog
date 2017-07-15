@@ -1,10 +1,9 @@
-<html>
-  <body>
-    <h1>{{art.name}}</h1>
-    <p>
-      {{art.description}}
-    </p>
-    <a href={{url_for('editArt', art_id=art.id )}}>Edit</a>
-    <a href={{url_for('deleteArt', art_id=art.id )}}>Delete</a>
-  </body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+  <h1>{{art.name}}</h1>
+  <p>
+    {{art.description}}
+  </p>
+  <a href={{url_for('editArt', art_id=art.id )}}>Edit</a>
+  <a href={{url_for('deleteArt', art_id=art.id )}}>Delete</a>
+{% endblock %}

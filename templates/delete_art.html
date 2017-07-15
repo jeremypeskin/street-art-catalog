@@ -1,9 +1,8 @@
-<html>
-  <body>
-    <h1> Are you sure you want to delete {{deletedItem.name}}? </h1>
-    <form action="{{ url_for('deleteArt',art_id=deletedItem.id)}}" method = 'post'>
-      <input type='submit', value = 'Delete'>
-    </form>
-    <a href = "{{ url_for('CityPage', city_id = city_id)}}"> Cancel </a>
-  </body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+  <h1> Are you sure you want to delete {{deletedItem.name}}? </h1>
+  <form action="{{ url_for('deleteArt',art_id=deletedItem.id)}}" method = 'post'>
+    <input type='submit', value = 'Delete'>
+  </form>
+  <a href = "{{ url_for('CityPage', city_id = city_id)}}"> Cancel </a>
+{% endblock %}
