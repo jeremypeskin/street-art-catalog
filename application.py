@@ -176,13 +176,15 @@ def gdisconnect():
 
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        return response
+        print response
+        return redirect('/')
     else:
         # For whatever reason, the given token was invalid.
         response = make_response(
             json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
-        return response
+        print response
+        return redirect('/')
 
 
 # Show all cities
@@ -191,7 +193,7 @@ def gdisconnect():
 @app.route('/')
 def DefaultCityArt():
     city = session.query(City)
-    return render_template('citylist.html', city=city)
+    return render_template('citylist.html', city=city, login_session=login_session)
 
 
 @app.route('/cities/<int:city_id>')
@@ -199,13 +201,13 @@ def CityPage(city_id):
     cities = session.query(City)
     city = session.query(City).filter_by(id=city_id).one()
     art = session.query(Art).filter_by(city_id=city.id)
-    return render_template('artlist.html', city=city, art=art, cities=cities)
+    return render_template('artlist.html', city=city, art=art, cities=cities, login_session=login_session)
 
 
 @app.route('/cities/artwork/<int:art_id>')
 def ArtPage(art_id):
     art = session.query(Art).filter_by(id=art_id).one()
-    return render_template('artpage.html', art=art)
+    return render_template('artpage.html', art=art, login_session=login_session)
 
 # Allow user to create new art item
 
@@ -225,7 +227,7 @@ def newArt():
         return redirect(url_for('ArtPage', art_id=art_id))
     else:
         cities = session.query(City)
-        return render_template('newart.html', cities=cities)
+        return render_template('newart.html', cities=cities, login_session=login_session)
 
 # Allow users to edit art items
 
@@ -234,6 +236,8 @@ def newArt():
 def editArt(art_id):
     editedItem = session.query(Art).filter_by(id=art_id).one()
     cities = session.query(City)
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         if request.form['itemName'] or request.form['itemDescription'] or request.form['categoryName']:
             editedItem.name = request.form['itemName']
@@ -243,7 +247,7 @@ def editArt(art_id):
         session.commit()
         return redirect(url_for('ArtPage', art_id=art_id))
     else:
-        return render_template('edit_art.html', editedItem=editedItem, cities=cities)
+        return render_template('edit_art.html', editedItem=editedItem, cities=cities, login_session=login_session)
 
 
 # Allow user to delete art items
@@ -253,6 +257,8 @@ def editArt(art_id):
 def deleteArt(art_id):
     deletedItem = session.query(Art).filter_by(id=art_id).one()
     city_id = deletedItem.city_id
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         session.delete(deletedItem)
         session.commit()
@@ -260,7 +266,8 @@ def deleteArt(art_id):
     else:
         return render_template('delete_art.html',
                                deletedItem=deletedItem,
-                               city_id=city_id)
+                               city_id=city_id,
+                               login_session=login_session)
 
 
 if __name__ == '__main__':

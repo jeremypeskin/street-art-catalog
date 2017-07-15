@@ -1,27 +1,33 @@
 <!doctype html>
 <html>
   <head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel=stylesheet type=text/css href='/static/style.css'>
     {% block head %}
     <title>{% block title %}{% endblock %} - Alio</title>
     {% endblock %}
   </head>
   <body>
-    <div id="navbar">
-      <ul>
-        <li>
-          <a href= {{ url_for('DefaultCityArt')}}>Home</a>
-        </li>
-        {% if session.logged_in %}
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+         <ul class="nav navbar-nav navbar-right">
           <li>
-            Logout
+            <a href= {{ url_for('DefaultCityArt')}}>Home</a>
           </li>
-        {% else %}
           <li>
-            Login
+            {% if 'username' not in login_session %}
+            <a href= {{ url_for('showLogin') }}>Login</a>
+            {% else %}
+            <a href= "/gdisconnect" }}>Logout</a>
+            {% endif %}
           </li>
-        {% endif %}
-      </ul>
-    </div>
+          <li>
+            <a href={{url_for('newArt')}}>Add Artwork</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
     <div id="content">{% block content %}{% endblock %}</div>
   </body>
 </html>
