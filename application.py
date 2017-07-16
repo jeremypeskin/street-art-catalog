@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, City, Art
+from database_setup import Base, City, Art, User
 
 # For OAuth
 
@@ -23,11 +23,35 @@ APPLICATION_NAME = "Web client 1"
 
 # Connect to database and create database session
 
-engine = create_engine('sqlite:///cityart.db')
+engine = create_engine('sqlite:///cityartwithusers.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+# User Helper Functions
+
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 # Create anti-forgery state token
@@ -112,7 +136,11 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-    # See if a user exists, if it doesn't make a new one
+    # If a user exists, it doesn't make a new one
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -125,30 +153,6 @@ def gconnect():
     print "Access token is:"
     print access_token
     return output
-
-# User Helper Functions
-
-
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
-    return user
-
-
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
 
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -183,7 +187,7 @@ def gdisconnect():
         response = make_response(
             json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
-        print response
+        return response
         return redirect('/')
 
 
@@ -207,7 +211,11 @@ def CityPage(city_id):
 @app.route('/cities/artwork/<int:art_id>')
 def ArtPage(art_id):
     art = session.query(Art).filter_by(id=art_id).one()
-    return render_template('artpage.html', art=art, login_session=login_session)
+    creator = getUserInfo(art.user_id)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('public_art_page.html', art=art, login_session=login_session, creator=creator)
+    else:
+        return render_template('artpage.html', art=art, login_session=login_session, creator=creator)
 
 # Allow user to create new art item
 
@@ -219,7 +227,8 @@ def newArt():
     if request.method == 'POST':
         newItem = Art(name=request.form['itemName'],
                       description=request.form['itemDescription'],
-                      city_id=request.form['categoryName'])
+                      city_id=request.form['categoryName'],
+                      user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
         print "Item has been added"

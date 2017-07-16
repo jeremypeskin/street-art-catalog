@@ -11,9 +11,12 @@
   <body>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
-         <ul class="nav navbar-nav navbar-right">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ url_for('DefaultCityArt')}}">ALIO</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href= {{ url_for('DefaultCityArt')}}>Home</a>
+            <a href={{url_for('newArt')}}>Add Artwork</a>
           </li>
           <li>
             {% if 'username' not in login_session %}
@@ -22,12 +25,11 @@
             <a href= "/gdisconnect" }}>Logout</a>
             {% endif %}
           </li>
-          <li>
-            <a href={{url_for('newArt')}}>Add Artwork</a>
-          </li>
         </ul>
       </div>
     </nav>
-    <div id="content">{% block content %}{% endblock %}</div>
+    <div class="container">
+      <div id="content">{% block content %}{% endblock %}</div>
+    </div>
   </body>
 </html>

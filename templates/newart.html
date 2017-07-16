@@ -1,16 +1,25 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Add new street art</h1>
+    <h1>Add New Art Item</h1>
     <form action = "{{ url_for('newArt') }}" method="POST">
-      <input name="itemName" placeholder="Item Name" type="text"/>
-      <textarea name="itemDescription" placeholder="Description" type="text"/></textarea>
-      <select name="categoryName">
-        {% for i in cities %}
-        <option value="{{i.id}}">
-          {{i.name}}
-        </option>
-        {% endfor %}
-      </select>
-      <input type="submit" value="Add"/>
+      <div class="form-group">
+        <label>Item Name</label>
+        <input class="form-control" name="itemName" placeholder="Item Name" type="text"/>
+      </div>
+      <div class="form-group">
+        <label>Item Description</label>
+        <textarea class="form-control" name="itemDescription" placeholder="Description" type="text"/></textarea>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <select class="form-control" name="categoryName">
+          {% for i in cities %}
+          <option value="{{i.id}}">
+            {{i.name}}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <input type="submit" value="Add" class="btn btn-default btn-primary"/>
     </form>
 {% endblock %}
