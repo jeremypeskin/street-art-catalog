@@ -1,4 +1,5 @@
-from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
+from flask import Flask, render_template, url_for
+from flask import request, redirect, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, City, Art, User
@@ -6,7 +7,8 @@ from database_setup import Base, City, Art, User
 # For OAuth
 
 from flask import session as login_session
-import random, string
+import random
+import string
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -30,6 +32,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # Build an endpoint for API requests
+
 
 @app.route('/cities/<int:city_id>/JSON')
 def cityPageJSON(city_id):
@@ -126,7 +129,7 @@ def gconnect():
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
+        response = make_response(json.dumps('User is already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -207,7 +210,9 @@ def gdisconnect():
 @app.route('/')
 def DefaultCityArt():
     city = session.query(City)
-    return render_template('citylist.html', city=city, login_session=login_session)
+    return render_template('citylist.html',
+                           city=city,
+                           login_session=login_session)
 
 
 @app.route('/cities/<int:city_id>')
@@ -215,7 +220,11 @@ def CityPage(city_id):
     cities = session.query(City)
     city = session.query(City).filter_by(id=city_id).one()
     art = session.query(Art).filter_by(city_id=city.id)
-    return render_template('artlist.html', city=city, art=art, cities=cities, login_session=login_session)
+    return render_template('artlist.html',
+                           city=city,
+                           art=art,
+                           cities=cities,
+                           login_session=login_session)
 
 
 @app.route('/cities/artwork/<int:art_id>')
@@ -223,9 +232,15 @@ def ArtPage(art_id):
     art = session.query(Art).filter_by(id=art_id).one()
     creator = getUserInfo(art.user_id)
     if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('public_art_page.html', art=art, login_session=login_session, creator=creator)
+        return render_template('public_art_page.html',
+                               art=art,
+                               login_session=login_session,
+                               creator=creator)
     else:
-        return render_template('artpage.html', art=art, login_session=login_session, creator=creator)
+        return render_template('artpage.html',
+                               art=art,
+                               login_session=login_session,
+                               creator=creator)
 
 # Allow user to create new art item
 
@@ -246,7 +261,9 @@ def newArt():
         return redirect(url_for('ArtPage', art_id=art_id))
     else:
         cities = session.query(City)
-        return render_template('newart.html', cities=cities, login_session=login_session)
+        return render_template('newart.html',
+                               cities=cities,
+                               login_session=login_session)
 
 # Allow users to edit art items
 
@@ -261,12 +278,15 @@ def editArt(art_id):
         if request.form['itemName'] or request.form['itemDescription'] or request.form['categoryName']:
             editedItem.name = request.form['itemName']
             editedItem.description = request.form['itemDescription']
-            editedItem.city_id=request.form['categoryName']
+            editedItem.city_id = request.form['categoryName']
         session.add(editedItem)
         session.commit()
         return redirect(url_for('ArtPage', art_id=art_id))
     else:
-        return render_template('edit_art.html', editedItem=editedItem, cities=cities, login_session=login_session)
+        return render_template('edit_art.html',
+                               editedItem=editedItem,
+                               cities=cities,
+                               login_session=login_session)
 
 
 # Allow user to delete art items
