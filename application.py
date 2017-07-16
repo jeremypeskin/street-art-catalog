@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, flash
+from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, City, Art, User
@@ -28,6 +28,16 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+# Build an endpoint for API requests
+
+@app.route('/cities/<int:city_id>/JSON')
+def cityPageJSON(city_id):
+    cities = session.query(City)
+    city = session.query(City).filter_by(id=city_id).one()
+    art = session.query(Art).filter_by(city_id=city.id)
+    return jsonify(Art=[i.serialize for i in art])
+
 
 # User Helper Functions
 
@@ -268,6 +278,8 @@ def deleteArt(art_id):
     city_id = deletedItem.city_id
     if 'username' not in login_session:
         return redirect('/login')
+    if deletedItem.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('Oops! You can only delete artworks that you created.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(deletedItem)
         session.commit()
