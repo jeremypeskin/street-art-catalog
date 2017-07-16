@@ -14,6 +14,7 @@ SQLAlchemy
 ## Installation
 
 Install VirtualBox and Vagrant
+Install version 0.9 of Flask (pip install flask==0.9)
 Launch & Connect to the VagrantVM
 $ vagrant up
 $ vagrant ssh

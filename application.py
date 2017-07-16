@@ -16,11 +16,25 @@ import json
 from flask import make_response
 import requests
 
+# For decorators
+from functools import wraps
+
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Web client 1"
+
+# Build login required decorator
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in login_session:
+            return redirect(url_for('showLogin', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # Connect to database and create database session
@@ -246,9 +260,8 @@ def ArtPage(art_id):
 
 
 @app.route('/new/', methods=['GET', 'POST'])
+@login_required
 def newArt():
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         newItem = Art(name=request.form['itemName'],
                       description=request.form['itemDescription'],
@@ -269,11 +282,10 @@ def newArt():
 
 
 @app.route('/cities/artwork/<int:art_id>/edit', methods=['GET', 'POST'])
+@login_required
 def editArt(art_id):
     editedItem = session.query(Art).filter_by(id=art_id).one()
     cities = session.query(City)
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         if request.form['itemName'] or request.form['itemDescription'] or request.form['categoryName']:
             editedItem.name = request.form['itemName']
@@ -293,11 +305,10 @@ def editArt(art_id):
 
 
 @app.route('/cities/artwork/<int:art_id>/delete', methods=['GET', 'POST'])
+@login_required
 def deleteArt(art_id):
     deletedItem = session.query(Art).filter_by(id=art_id).one()
     city_id = deletedItem.city_id
-    if 'username' not in login_session:
-        return redirect('/login')
     if deletedItem.user_id != login_session['user_id']:
         return "<script>function myFunction() {alert('Oops! You can only delete artworks that you created.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
