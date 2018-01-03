@@ -62,7 +62,7 @@ class Art(Base):
 
 # insert at end of file.  This code points to the database #
 engine = create_engine(
-    'sqlite:///cityartwithusers.db')
+    'postgresql://cityartwithusers:password@localhost/cityartwithusers')
 
 # This code goes into the database and creates new tables
 Base.metadata.create_all(engine)

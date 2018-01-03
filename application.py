@@ -39,7 +39,7 @@ def login_required(f):
 
 # Connect to database and create database session
 
-engine = create_engine('sqlite:///cityartwithusers.db')
+engine = create_engine('postgresql://cityartwithusers:password@localhost/cityartwithusers')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
